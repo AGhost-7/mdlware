@@ -1,4 +1,4 @@
-# middleware-generic
+# mdlware
 
 Simple module that implements the middleware pattern.
 
