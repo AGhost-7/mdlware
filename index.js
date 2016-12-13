@@ -4,6 +4,7 @@ var events = require('events')
 var EventEmitter = typeof events === 'function' ? events : events.EventEmitter
 var util = require('util')
 var timers = require('timers')
+var slice = Array.prototype.slice
 
 function Dispatcher() {
 	this._stack = []
@@ -18,7 +19,7 @@ var proto = Dispatcher.prototype
 
 proto.handle = function(namespace) {
 	var stack = this._stack
-	var args = Array.prototype.slice.call(arguments, 1)
+	var args = slice.call(arguments, 1)
 	var i = 0
 	var self = this
 
@@ -53,8 +54,12 @@ proto.use = function() {
 	if(arguments.length === 1) {
 		this._stack.push(new DispatcherItem(null, arguments[0]))
 	} else {
-		this._stack.push(new DispatcherItem(arguments[0], arguments[1]))
+		var namespace = arguments[0]
+		for(var i = 1; i < arguments.length; i++ ) {
+			this._stack.push(new DispatcherItem(namespace, arguments[i]))
+		}
 	}
+	return this
 }
 
 

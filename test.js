@@ -24,6 +24,12 @@ describe('middleware', function() {
 			}
 		})
 
+		middle.use('example2', function(args, next) {
+			next()
+		}, function(args, next) {
+			args.two = true
+		})
+
 		it('should handle simple results', function(done) {
 			var args = { level: 1 }
 			middle.handle('example', args)
@@ -34,7 +40,7 @@ describe('middleware', function() {
 		})
 
 		it('should emit thrown errors', function(done) {
-			middle.on('error', function(err) {
+			middle.once('error', function(err) {
 				assert(err)
 				done()
 			})
@@ -58,7 +64,15 @@ describe('middleware', function() {
 			}, 500)
 			middle.handle('foobar', args)
 		})
-
+		
+		it('should execute multi handlers', function(done) {
+			var args = {}
+			setTimeout(function() {
+				assert(args.two)
+				done()
+			}, 500)
+			middle.handle('example2', args)
+		})
 	})
 
 	describe('a use case with a "complete" callback', function() {
